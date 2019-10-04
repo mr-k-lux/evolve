@@ -38,6 +38,8 @@ public class liveSim : MonoBehaviour {
         glucose += nutrition;
         oxygen += oxidation;
         co2 -= decarbonisation;
+	    if (co2 < 0)
+            co2 = 0;
         if(glucose>50 && oxygen>50 && co2 < 60)
         {
             glucose -= 15;
