@@ -1,11 +1,12 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 
 public class liveSim : MonoBehaviour {
     int nutrition, oxidation, decarbonisation;
-   public int glucose, oxygen, co2, proteins;
+   public int glucose, oxygen, proteins;
+    byte co2;
 
     public GameObject cell;
     public TextMesh gl;
@@ -37,7 +38,8 @@ public class liveSim : MonoBehaviour {
     {
         glucose += nutrition;
         oxygen += oxidation;
-        co2 -= decarbonisation;
+        co2 -= (byte)decarbonisation;
+        
         if(glucose>50 && oxygen>50 && co2 < 60)
         {
             glucose -= 15;
@@ -64,10 +66,10 @@ public class liveSim : MonoBehaviour {
             proteins = 0;
             glucose = (glucose - 20) / 2;
             oxygen = (oxygen - 20) / 2;
-            co2 = (co2 + 20) / 2;
+            co2 = (byte)(((int)co2 + 20) / 2);
             dgt.glucose = (glucose - 20) / 2;
             dgt.oxygen = (oxygen - 20) / 2;
-            dgt.co2 = (co2 + 20) / 2;
+            dgt.co2 = (byte)(((int)co2 + 20) / 2);
         }
     }
 }
