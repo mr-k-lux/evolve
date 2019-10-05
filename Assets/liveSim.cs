@@ -1,11 +1,13 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 
 public class liveSim : MonoBehaviour {
     int nutrition, oxidation, decarbonisation;
-   public int glucose, oxygen, co2, proteins;
+    public int glucose, oxygen, co2, proteins;
+   
+    public int atf;
 
     public GameObject cell;
     public TextMesh gl;
@@ -22,6 +24,7 @@ public class liveSim : MonoBehaviour {
         oxygen = 40;
         co2 = 0;
         proteins = 0;
+        atf = 0;
         InvokeRepeating("SecondUpdate", 0f, 0.5f);
     }
 	
@@ -33,29 +36,33 @@ public class liveSim : MonoBehaviour {
         pr.text = "proteins: " + proteins;
 	}
 
-    void SecondUpdate()
+    void SecondUpdate() //life cycle
     {
         glucose += nutrition;
         oxygen += oxidation;
         co2 -= decarbonisation;
-        if(glucose>50 && oxygen>50 && co2 < 60)
+        if (co2 < 0) co2 = 0;
+        if (oxygen > 100) oxygen = 100;
+        if (glucose > 100) glucose = 100;
+        constMove();
+
+        if (glucose>50 && oxygen>50 && co2<60 && atf>30) //gain of breeding proteins
         {
             glucose -= 15;
             oxygen -= 20;
-            co2 += 35;
+            atf -= 15;
+            co2 += 40;
             proteins++;   
         }
-        else
+        else //breathe
         {
-            glucose -= 10;
-            oxygen -= 10;
-            co2 += 20;
+            breathe();
         }
-        if(glucose<=0 || oxygen<=0 || co2 >= 90)
+        if(glucose<=0 || oxygen<=0 || co2 >= 90) //death
         {
             Destroy(gameObject);
         }
-        if (proteins == 10)
+        if (proteins == 10) //breeding itself
         {
 
             GameObject a = Instantiate(cell);
@@ -65,9 +72,24 @@ public class liveSim : MonoBehaviour {
             glucose = (glucose - 20) / 2;
             oxygen = (oxygen - 20) / 2;
             co2 = (co2 + 20) / 2;
+            atf = (atf + 20) / 2;
             dgt.glucose = (glucose - 20) / 2;
             dgt.oxygen = (oxygen - 20) / 2;
             dgt.co2 = (co2 + 20) / 2;
+            dgt.atf = (atf + 20) / 2;
         }
+    }
+
+    void breathe()
+    {
+         glucose -= 10;
+         oxygen -= 10;
+         co2 += 20;
+        if (glucose > 0 && oxygen > 0) atf += 10;
+    }
+    void constMove()
+    {
+        atf -= 4;
+        //some moving action like move=true; and while it's true it'll move
     }
 }
